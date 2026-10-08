@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Chapitres</h1>
+<div class="chapter-grid">
+{% for chapter, count in due_counts.items() %}
+    <div class="chapter-card">
+        <div>
+            <div class="chapter-name">{{ chapter }}</div>
+            <span class="due-badge {{ 'zero' if count == 0 else '' }}">{{ count }} à réviser</span>
+        </div>
+        {% if count > 0 %}
+            <a class="review-btn" href="{{ url_for('review_chapter', chapter=chapter) }}">Réviser</a>
+        {% endif %}
+    </div>
+{% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="flashcard" id="card-{{ card.id }}">
+    <span class="chapter-tag">{{ card.chapter }}</span>
+    <div class="question">\( {{ card.question }} \)</div>
+    <div class="answer hidden">\( {{ card.answer }} \)</div>
+    <button class="reveal-btn" onclick="revealAnswer({{ card.id }})">Voir la réponse</button>
+    <div class="rating-buttons hidden" id="ratings-{{ card.id }}">
+        <form action="{{ url_for('review_card', card_id=card.id) }}" method="POST" style="display:contents">
+            <button name="quality" value="again" class="btn-again">Pas réussi<br><small>{{ intervals.again }}</small></button>
+            <button name="quality" value="hard" class="btn-hard">Moyen<br><small>{{ intervals.hard }}</small></button>
+            <button name="quality" value="good" class="btn-good">Bien<br><small>{{ intervals.good }}</small></button>
+            <button name="quality" value="easy" class="btn-easy">Facile<br><small>{{ intervals.easy }}</small></button>
+        </form>
+    </div>
+</div>
+<script>
+function revealAnswer(cardId) {
+    document.querySelector(`#card-${cardId} .answer`).classList.remove("hidden");
+    document.querySelector(`#card-${cardId} .reveal-btn`).classList.add("hidden");
+    document.getElementById(`ratings-${cardId}`).classList.remove("hidden");
+}
+</script>
+{% endblock %}

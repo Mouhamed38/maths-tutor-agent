@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Mes cartes</h1>
+
+{% for chapter, cards in grouped.items() %}
+<div class="chapter-section">
+    <button class="chapter-toggle" onclick="toggleChapter({{ loop.index0 }})">
+        <span class="chapter-toggle-icon" id="icon-{{ loop.index0 }}">▸</span>
+        {{ chapter }} <span class="due-badge">{{ cards|length }} carte(s)</span>
+    </button>
+
+    <div class="chapter-grid hidden" id="chapter-{{ loop.index0 }}">
+    {% for card in cards %}
+    <div class="flashcard" id="card-{{ card.id }}">
+        <div class="question">\( {{ card.question }} \)</div>
+        <div class="answer hidden">\( {{ card.answer }} \)</div>
+        <button class="reveal-btn" onclick="revealAnswer({{ card.id }})">Voir la réponse</button>
+
+        <div class="card-actions">
+            <a href="{{ url_for('edit_card', card_id=card.id) }}">Modifier</a>
+            <form action="{{ url_for('delete_card', card_id=card.id) }}" method="POST"
+                  onsubmit="return confirm('Supprimer cette carte ?');">
+                <button type="submit" class="delete-btn">Supprimer</button>
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+    </div>
+</div>
+{% endfor %}
+
+<script>
+function toggleChapter(index) {
+    const container = document.getElementById(`chapter-${index}`);
+    const icon = document.getElementById(`icon-${index}`);
+    container.classList.toggle("hidden");
+    icon.textContent = container.classList.contains("hidden") ? "▸" : "▾";
+}
+
+function revealAnswer(cardId) {
+    document.querySelector(`#card-${cardId} .answer`).classList.remove("hidden");
+    document.querySelector(`#card-${cardId} .reveal-btn`).classList.add("hidden");
+}
+</script>
+{% endblock %}

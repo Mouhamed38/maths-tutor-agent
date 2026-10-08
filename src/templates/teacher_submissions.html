@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Corrections en attente</h1>
+<a href="{{ url_for('teacher_dashboard') }}">← Tableau de bord élèves</a>
+{% if rows %}
+<div class="chapter-grid">
+{% for row in rows %}
+    <a class="chapter-card" href="{{ url_for('teacher_submission_detail', submission_id=row.submission.id) }}"
+       style="text-decoration:none; color:inherit;">
+        <div>
+            <div class="chapter-name">{{ row.student.full_name }}</div>
+            <span class="chapter-tag">{{ row.exercise.chapter }}</span>
+        </div>
+    </a>
+{% endfor %}
+</div>
+{% else %}
+<p>Aucune correction en attente 🎉</p>
+{% endif %}
+{% endblock %}

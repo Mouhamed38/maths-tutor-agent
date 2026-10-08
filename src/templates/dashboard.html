@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Salut {{ session.student_name }} 👋</h1>
+<div class="chapter-grid">
+    <div class="chapter-card">
+        <div>
+            <div class="chapter-name">Cartes</div>
+            <span class="due-badge {{ 'zero' if cards_due == 0 else '' }}">{{ cards_due }} à réviser</span>
+        </div>
+        {% if cards_due > 0 %}<a class="review-btn" href="{{ url_for('review_cards') }}">Réviser</a>{% endif %}
+    </div>
+    <div class="chapter-card">
+        <div>
+            <div class="chapter-name">Exercices</div>
+            <span class="due-badge {{ 'zero' if exercises_todo == 0 else '' }}">{{ exercises_todo }} à faire</span>
+        </div>
+        {% if exercises_todo > 0 %}<a class="review-btn" href="{{ url_for('review_exercises') }}">Faire un exercice</a>{% endif %}
+    </div>
+</div>
+{% endblock %}

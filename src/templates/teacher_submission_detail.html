@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ student.full_name }}</h1>
+<div class="flashcard">
+    <span class="chapter-tag">{{ exercise.chapter }}</span>
+    <div class="question">{{ exercise.statement }}</div>
+    <img src="{{ url_for('static', filename='uploads/' + submission.photo_path) }}"
+         style="max-width:100%; border-radius:10px; margin:16px 0;">
+</div>
+
+<form method="POST" class="form-card" style="margin-top:20px;">
+    <input type="hidden" name="action" value="a_revoir">
+    <label>À revoir — correction
+        <textarea name="feedback_raw" required></textarea>
+    </label>
+    <button type="submit" class="action-btn danger">À revoir</button>
+</form>
+
+<form method="POST" class="form-card" style="margin-top:20px;">
+    <input type="hidden" name="action" value="petite_erreur">
+    <label>Petite erreur — note (13 à 16)
+        <input type="number" name="grade" min="13" max="16" required>
+    </label>
+    <label>Correction
+        <textarea name="feedback_raw" required></textarea>
+    </label>
+    <button type="submit" class="action-btn warning">Petite erreur</button>
+</form>
+
+<form method="POST" class="form-card" style="margin-top:20px;">
+    <input type="hidden" name="action" value="reussi">
+    <label>Réussi — note (17 à 20)
+        <input type="number" name="grade" min="17" max="20" required>
+    </label>
+    <button type="submit" class="action-btn success">Réussi</button>
+</form>
+
+<a href="{{ url_for('teacher_submissions') }}">← Corrections en attente</a> ·
+<a href="{{ url_for('teacher_dashboard') }}">Tableau de bord élèves</a>
+{% endblock %}

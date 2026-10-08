@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Ajouter un exercice</h1>
+<form class="form-card" method="POST">
+    <label>Énoncé
+        <textarea name="statement" required placeholder="Ex : Résoudre 2x - 3 = 7"></textarea>
+    </label>
+    <label>Chapitre
+        <input type="text" name="chapter" placeholder="Ex : Équations">
+    </label>
+    <label>Réponse attendue (pour toi seulement)
+        <input type="text" name="reference_answer" placeholder="Ex : x = 5">
+    </label>
+    <button type="submit">Créer l'exercice</button>
+</form>
+{% endblock %}

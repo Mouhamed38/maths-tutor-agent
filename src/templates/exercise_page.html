@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="flashcard">
+    <span class="chapter-tag">{{ exercise.chapter }}</span>
+    <div class="question">{{ exercise.statement }}</div>
+
+    {% if last_submission %}
+<div class="answer" style="margin: 16px 0;">
+    <strong>Correction de ton prof :</strong>
+    {% if last_submission.grade %}<p>Note : {{ last_submission.grade }}/20</p>{% endif %}
+    <p style="margin-top:8px; white-space: pre-line;">{{ last_submission.feedback_text }}</p>
+</div>
+{% endif %}
+
+    <form action="{{ url_for('submit_exercise', exercise_id=exercise.id) }}" method="POST"
+          enctype="multipart/form-data" class="form-card" style="margin-top:20px;">
+        <label>Photo de ta réponse
+            <input type="file" name="photo" accept="image/*" capture="environment" required>
+        </label>
+        <button type="submit">Envoyer</button>
+    </form>
+</div>
+{% endblock %}

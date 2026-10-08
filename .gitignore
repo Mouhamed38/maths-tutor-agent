@@ -1,0 +1,10 @@
+@"
+venv/
+.env
+instance/
+src/static/uploads/
+__pycache__/
+*.pyc
+cloudfare info/
+old_stuff/
+"@ | Set-Content -Encoding ascii .gitignore

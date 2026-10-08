@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Ajouter une carte</h1>
+<form class="form-card" method="POST" id="card-form">
+    <label>Question
+        <math-field id="question-field" smart-mode="true" style="width:100%;"></math-field>
+        <input type="hidden" name="question" id="question-hidden">
+    </label>
+    <label>Réponse
+        <math-field id="answer-field" smart-mode="true" style="width:100%;"></math-field>
+        <input type="hidden" name="answer" id="answer-hidden">
+    </label>
+    <label>Chapitre
+        <input type="text" name="chapter" list="chapters-list" placeholder="Ex : Fonctions affines">
+    </label>
+    <datalist id="chapters-list">
+        {% for chapter in chapters %}
+        <option value="{{ chapter }}">
+        {% endfor %}
+    </datalist>
+    <button type="submit">Créer la carte</button>
+</form>
+
+<script>
+document.getElementById("question-field").addEventListener("input", (e) => {
+    document.getElementById("question-hidden").value = e.target.value;
+});
+document.getElementById("answer-field").addEventListener("input", (e) => {
+    document.getElementById("answer-hidden").value = e.target.value;
+});
+</script>
+{% endblock %}

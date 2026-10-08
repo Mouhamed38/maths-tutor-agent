@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="hero">
+    <div class="hero-badge">✎ Révision de maths</div>
+    <h1 class="hero-title">Garde le rythme entre deux cours.</h1>
+    <p class="hero-subtitle">Des cartes de révision, des rappels espacés, et un suivi de tes chapitres — tout au même endroit.</p>
+
+    <form class="form-card hero-form" action="{{ url_for('login') }}" method="POST">
+        <label>Ton prénom
+            <input type="text" name="full_name" placeholder="Ex : Léa" required>
+        </label>
+        <button type="submit">Accéder à mes cartes</button>
+    </form>
+</div>
+{% endblock %}

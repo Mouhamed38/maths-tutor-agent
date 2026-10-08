@@ -1,0 +1,269 @@
+:root {
+  --bg: #0b0d17;
+  --paper: #12141f;
+  --paper-alt: #171a2a;
+  --ink: #eef0fa;
+  --ink-soft: #9195b0;
+  --accent: #7c6fff;
+  --accent-soft: rgba(124, 111, 255, 0.15);
+  --line: #23263a;
+  --again: #ff5a5f;
+  --hard: #ffb648;
+  --good: #35d399;
+  --easy: #4ea1ff;
+  --radius: 14px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: "Inter", system-ui, sans-serif;
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(circle at 15% 20%, rgba(124,111,255,0.25), transparent 45%),
+    radial-gradient(circle at 85% 0%, rgba(78,161,255,0.18), transparent 40%),
+    radial-gradient(circle at 50% 100%, rgba(53,211,153,0.10), transparent 50%);
+  background-attachment: fixed;
+  color: var(--ink);
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 20px 80px;
+  line-height: 1.5;
+}
+
+h1 {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 700;
+  font-size: 1.6em;
+  margin-bottom: 16px;
+}
+
+nav {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding-bottom: 16px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--line);
+}
+
+nav .brand {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 700;
+  color: var(--accent);
+  margin-right: auto;
+}
+
+nav a { text-decoration: none; color: var(--ink-soft); font-weight: 500; font-size: 0.95em; }
+nav a:hover { color: var(--accent); }
+
+/* Accueil */
+.hero { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 60px 0 20px; }
+
+.hero-badge {
+  background: var(--accent-soft); color: var(--accent);
+  padding: 5px 14px; border-radius: 20px; font-size: 0.8em; font-weight: 600; margin-bottom: 20px;
+}
+
+.hero-title {
+  font-family: "Space Grotesk", sans-serif; font-size: 2.2em; font-weight: 700;
+  max-width: 480px; line-height: 1.2; margin-bottom: 14px;
+}
+
+.hero-subtitle { color: var(--ink-soft); max-width: 420px; margin-bottom: 36px; }
+.hero-form { width: 100%; max-width: 320px; align-items: stretch; }
+.hero-form button { align-self: stretch; text-align: center; }
+
+/* Chapitres */
+.chapter-grid { display: grid; gap: 14px; }
+
+.chapter-card {
+  background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 18px 20px; display: flex; align-items: center; justify-content: space-between;
+}
+
+.chapter-name { font-weight: 600; }
+
+.due-badge {
+  font-size: 0.8em; padding: 3px 10px; border-radius: 20px;
+  background: var(--accent-soft); color: var(--accent); font-weight: 600;
+}
+.due-badge.zero { background: var(--line); color: var(--ink-soft); }
+
+.chapter-card .review-btn {
+  background: var(--accent); color: white; padding: 8px 16px; border-radius: 8px;
+  text-decoration: none; font-weight: 600; font-size: 0.9em;
+}
+
+/* Flashcard */
+.flashcard {
+  background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 32px 28px; box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+}
+
+.chapter-tag {
+  display: inline-block; background: var(--accent-soft); color: var(--accent);
+  padding: 3px 10px; border-radius: 20px; font-size: 0.75em; font-weight: 600; text-transform: uppercase;
+}
+
+.question { font-family: "Space Grotesk", sans-serif; font-size: 1.3em; font-weight: 600; margin: 18px 0; }
+
+.answer {
+  background: var(--paper-alt); border-left: 3px solid var(--accent);
+  padding: 14px 16px; border-radius: 8px; margin: 18px 0;
+}
+
+.reveal-btn {
+  padding: 10px 20px; border: none; border-radius: 8px;
+  background: var(--accent); color: white; font-weight: 600; cursor: pointer;
+}
+
+.rating-buttons { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+
+.rating-buttons button {
+  flex: 1; min-width: 90px; padding: 10px 0; border: none; border-radius: 8px;
+  color: white; font-weight: 600; cursor: pointer;
+}
+
+.rating-buttons button small { display: block; font-weight: 400; opacity: 0.85; font-size: 0.85em; }
+
+.btn-again { background: var(--again); }
+.btn-hard  { background: var(--hard); }
+.btn-good  { background: var(--good); }
+.btn-easy  { background: var(--easy); }
+
+/* Formulaires */
+.form-card {
+  background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 32px 28px; box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+  display: flex; flex-direction: column; gap: 18px;
+}
+
+.form-card label { font-weight: 600; font-size: 0.9em; display: flex; flex-direction: column; gap: 6px; }
+
+.form-card input[type="text"], .form-card textarea {
+  font-family: inherit; font-size: 1em; padding: 10px 12px; border: 1px solid var(--line);
+  border-radius: 8px; background: var(--bg); color: var(--ink); resize: vertical;
+}
+
+.form-card input[type="text"]:focus, .form-card textarea:focus {
+  outline: none; border-color: var(--accent); background: var(--paper-alt);
+}
+
+.form-card textarea { min-height: 90px; }
+
+.form-card button[type="submit"] {
+  align-self: flex-start; background: var(--accent); color: white; border: none;
+  padding: 10px 22px; border-radius: 8px; font-weight: 600; cursor: pointer;
+}
+
+.done-message {
+  background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 40px; text-align: center;
+}
+
+.hidden { display: none; }
+.teacher-card {
+  background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 18px 20px; display: flex; flex-direction: column; gap: 12px;
+}
+
+.teacher-card-header { display: flex; justify-content: space-between; align-items: center; }
+
+.history-table { width: 100%; font-size: 0.85em; color: var(--ink-soft); border-collapse: collapse; }
+.history-table td { padding: 4px 0; border-top: 1px solid var(--line); }
+
+.alert-banner {
+  background: rgba(255, 90, 95, 0.12);
+  border: 1px solid var(--again);
+  color: var(--again);
+  padding: 12px 18px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.stat-line { font-size: 0.9em; color: var(--ink-soft); margin: 4px 0 12px; }
+
+.heatmap { display: flex; flex-wrap: wrap; gap: 3px; max-width: 240px; margin-bottom: 12px; }
+.heat-cell { width: 12px; height: 12px; border-radius: 3px; }
+.heat-0 { background: var(--line); }
+.heat-1 { background: rgba(124,111,255,0.35); }
+.heat-2 { background: rgba(124,111,255,0.65); }
+.heat-3 { background: var(--accent); }
+
+.due-badge.warning { background: rgba(255, 90, 95, 0.15); color: var(--again); }
+.chapter-section-title {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 1.1em;
+  margin: 24px 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.card-actions { margin-top: 12px; display: flex; gap: 14px; align-items: center; }
+.card-actions a { color: var(--accent); text-decoration: none; font-size: 0.9em; font-weight: 600; }
+
+.delete-btn {
+  background: none;
+  border: none;
+  color: var(--again);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9em;
+  padding: 0;
+}
+.action-btn {
+  align-self: flex-start;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+.action-btn.danger { background: var(--again); }
+.action-btn.warning { background: var(--hard); }
+.action-btn.success { background: var(--good); }
+.chapter-section { margin-bottom: 16px; }
+
+.chapter-toggle {
+  width: 100%;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 1.1em;
+  color: var(--ink);
+  cursor: pointer;
+  text-align: left;
+}
+
+.chapter-toggle:hover { border-color: var(--accent); }
+
+.chapter-toggle-icon { color: var(--accent); font-size: 0.9em; }
+
+.chapter-grid { margin-top: 12px; }
+math-field {
+  display: block;
+  width: 100%;
+  font-size: 1.4em;
+  background: var(--paper-alt);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: var(--ink);
+  --selection-background-color: rgba(124, 111, 255, 0.35);
+  --selection-color: var(--ink);
+  --contains-highlight-background-color: rgba(124, 111, 255, 0.15);
+  --caret-color: var(--accent);
+}
+
+math-field:focus-within {
+  border-color: var(--accent);
+}

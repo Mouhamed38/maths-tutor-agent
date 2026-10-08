@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Modifier la carte</h1>
+<form class="form-card" method="POST">
+    <label>Question
+        <math-field id="question-field" smart-mode="true" style="width:100%;"></math-field>
+        <input type="hidden" name="question" id="question-hidden">
+    </label>
+    <label>Réponse
+        <math-field id="answer-field" smart-mode="true" style="width:100%;"></math-field>
+        <input type="hidden" name="answer" id="answer-hidden">
+    </label>
+    <label>Chapitre
+        <input type="text" name="chapter" list="chapters-list" value="{{ card.chapter or '' }}">
+    </label>
+    <datalist id="chapters-list">
+        {% for chapter in chapters %}
+        <option value="{{ chapter }}">
+        {% endfor %}
+    </datalist>
+    <button type="submit">Enregistrer</button>
+</form>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("question-field").value = {{ card.question | tojson }};
+    document.getElementById("answer-field").value = {{ card.answer | tojson }};
+    document.getElementById("question-hidden").value = {{ card.question | tojson }};
+    document.getElementById("answer-hidden").value = {{ card.answer | tojson }};
+
+    document.getElementById("question-field").addEventListener("input", (e) => {
+        document.getElementById("question-hidden").value = e.target.value;
+    });
+    document.getElementById("answer-field").addEventListener("input", (e) => {
+        document.getElementById("answer-hidden").value = e.target.value;
+    });
+});
+</script>
+{% endblock %}

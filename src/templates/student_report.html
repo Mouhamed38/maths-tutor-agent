@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Rapport — {{ student.full_name }}</h1>
+<div class="flashcard" style="white-space: pre-line;">
+    {{ rapport }}
+</div>
+<a href="{{ url_for('teacher_student_detail', student_id=student.id) }}">← Retour au détail élève</a>
+{% endblock %}

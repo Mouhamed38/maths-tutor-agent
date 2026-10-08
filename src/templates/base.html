@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Maths Tutor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script defer src="https://cdn.jsdelivr.net/npm/mathlive"></script>
+</head>
+<body>
+    <nav>
+        <span class="brand">Σ MathsTutor</span>
+        {% if session.student_id %}
+            <a href="{{ url_for('dashboard') }}">Tableau de bord</a>
+            <a href="{{ url_for('cards_list') }}">Toutes les cartes</a>
+            <a href="{{ url_for('add_card') }}">Ajouter une carte</a>
+            <a href="{{ url_for('add_exercise') }}">Ajouter un exercice</a>
+            <a href="{{ url_for('logout') }}">Changer d'élève</a>
+        {% endif %}
+    </nav>
+    {% block content %}{% endblock %}
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            MathLive.renderMathInDocument();
+        });
+    </script>
+</body>
+</html>

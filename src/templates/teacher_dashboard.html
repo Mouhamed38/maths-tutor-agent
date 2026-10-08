@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Suivi élèves  <a href="{{ url_for('teacher_submissions') }}">Corrections en attente →</a> </h1>
+
+{% if inactive_students %}
+<div class="alert-banner">⚠️ Pas encore révisé aujourd'hui : {{ inactive_students | join(", ") }}</div>
+{% endif %}
+
+<div class="chapter-grid">
+{% for row in summary %}
+    <div class="teacher-card">
+        <div class="teacher-card-header">
+            <div class="chapter-name">{{ row.student.full_name }}</div>
+            <span class="due-badge {{ 'zero' if row.today_count == 0 else '' }}">{{ row.today_count }} carte(s) aujourd'hui</span>
+        </div>
+        <div class="stat-line">
+            {% if row.success_rate is not none %}Taux de réussite : {{ row.success_rate }}%{% else %}Pas encore de données{% endif %}
+        </div>
+        <div class="heatmap">
+        {% for day in row.heatmap %}
+            {% set level = 0 if day.count == 0 else (1 if day.count <= 2 else (2 if day.count <= 5 else 3)) %}
+            <span class="heat-cell heat-{{ level }}" title="{{ day.date }} — {{ day.count }} carte(s)"></span>
+        {% endfor %}
+        </div>
+        <a class="review-btn" href="{{ url_for('teacher_student_detail', student_id=row.student.id) }}">Voir le détail</a>
+    </div>
+{% endfor %}
+</div>
+{% endblock %}
