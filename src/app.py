@@ -1,18 +1,28 @@
-from flask import Flask, render_template, request, redirect, url_for, session
-from datetime import datetime
-from src.models import db, Student, Card, StudentCardState,ReviewLog,Exercise, ExerciseSubmission
-from datetime import datetime, timedelta
-from sqlalchemy import func
-from sqlalchemy import func
-from datetime import timedelta
 import os
+from datetime import datetime, timedelta
+
+from dotenv import load_dotenv
+
+load_dotenv()
+
+from src.storage import save_photo, photo_url
+from flask import Flask, render_template, request, redirect, url_for, session
+from sqlalchemy import func
 from werkzeug.utils import secure_filename
 from langchain_mistralai import ChatMistralAI
 from langchain_core.messages import SystemMessage, HumanMessage
+
+from src.models import db, Student, Card, StudentCardState, ReviewLog, Exercise, ExerciseSubmission
 from src.graph import report_app
+
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///tutor.db"
-app.config["SECRET_KEY"] = "change-moi-plus-tard"
+
+database_url = os.environ.get("DATABASE_URL", "sqlite:///tutor.db")
+if database_url.startswith("postgres://"):
+    database_url = database_url.replace("postgres://", "postgresql://", 1)
+
+app.config["SQLALCHEMY_DATABASE_URI"] = database_url
+app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "dev-only-change-me")
 
 db.init_app(app)
 app.config["UPLOAD_FOLDER"] = os.path.join(app.root_path, "static", "uploads")
@@ -306,7 +316,8 @@ def teacher_submission_detail(submission_id):
         return redirect(url_for("teacher_submissions"))
 
     return render_template("teacher_submission_detail.html",
-                            submission=submission, exercise=exercise, student=student)
+                            submission=submission, exercise=exercise, student=student,
+                            photo_link=photo_url(submission.photo_path))
 @app.route("/cards")
 def cards_list():
     if "student_id" not in session:
@@ -441,7 +452,7 @@ def submit_exercise(exercise_id):
 
     photo = request.files["photo"]
     filename = secure_filename(f"{session['student_id']}_{exercise_id}_{int(datetime.utcnow().timestamp())}.jpg")
-    photo.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
+    save_photo(photo, filename, app.config["UPLOAD_FOLDER"])
 
     db.session.add(ExerciseSubmission(
         exercise_id=exercise_id, student_id=session["student_id"],

@@ -4,8 +4,8 @@
 <div class="flashcard">
     <span class="chapter-tag">{{ exercise.chapter }}</span>
     <div class="question">{{ exercise.statement }}</div>
-    <img src="{{ url_for('static', filename='uploads/' + submission.photo_path) }}"
-         style="max-width:100%; border-radius:10px; margin:16px 0;">
+    <img src="{{ photo_link }}"
+        style="max-width:100%; border-radius:10px; margin:16px 0;">
 </div>
 
 <form method="POST" class="form-card" style="margin-top:20px;">
