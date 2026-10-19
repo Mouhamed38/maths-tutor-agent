@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <h1>Suivi élèves  <a href="{{ url_for('teacher_submissions') }}">Corrections en attente →</a> </h1>
+<p><a href="{{ url_for('teacher_logout') }}">Se déconnecter de l'espace professeur</a></p>
 
 {% if inactive_students %}
 <div class="alert-banner">⚠️ Pas encore révisé aujourd'hui : {{ inactive_students | join(", ") }}</div>

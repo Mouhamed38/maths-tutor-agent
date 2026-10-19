@@ -1,4 +1,3 @@
-@"
 venv/
 .env
 instance/
@@ -7,4 +6,5 @@ __pycache__/
 *.pyc
 cloudfare info/
 old_stuff/
-"@ | Set-Content -Encoding ascii .gitignore
+test.py
+test_r2.py

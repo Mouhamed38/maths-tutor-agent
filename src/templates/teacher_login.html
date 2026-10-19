@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Espace professeur</h1>
+
+{% if not configured %}
+<div class="alert-banner">Mot de passe professeur non configuré (variable d'environnement TEACHER_PASSWORD).</div>
+{% endif %}
+{% if error %}
+<div class="alert-banner">{{ error }}</div>
+{% endif %}
+
+<form class="form-card" method="POST">
+    <label>Mot de passe
+        <input type="password" name="password" required autofocus>
+    </label>
+    <button type="submit">Se connecter</button>
+</form>
+{% endblock %}

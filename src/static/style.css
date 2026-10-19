@@ -141,12 +141,12 @@ nav a:hover { color: var(--accent); }
 
 .form-card label { font-weight: 600; font-size: 0.9em; display: flex; flex-direction: column; gap: 6px; }
 
-.form-card input[type="text"], .form-card textarea {
+.form-card input[type="text"], .form-card input[type="password"], .form-card textarea {
   font-family: inherit; font-size: 1em; padding: 10px 12px; border: 1px solid var(--line);
   border-radius: 8px; background: var(--bg); color: var(--ink); resize: vertical;
 }
 
-.form-card input[type="text"]:focus, .form-card textarea:focus {
+.form-card input[type="text"]:focus, .form-card input[type="password"]:focus, .form-card textarea:focus {
   outline: none; border-color: var(--accent); background: var(--paper-alt);
 }
 

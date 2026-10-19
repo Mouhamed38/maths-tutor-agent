@@ -1,12 +1,15 @@
+import hmac
 import os
 from datetime import datetime, timedelta
+from functools import wraps
 
+import httpx
 from dotenv import load_dotenv
 
 load_dotenv()
 
 from src.storage import save_photo, photo_url
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, abort, render_template, request, redirect, url_for, session
 from sqlalchemy import func
 from werkzeug.utils import secure_filename
 from langchain_mistralai import ChatMistralAI
@@ -17,12 +20,28 @@ from src.graph import report_app
 
 app = Flask(__name__)
 
+# Render définit RENDER=true sur tous ses services : on s'en sert pour détecter la production.
+IS_PRODUCTION = bool(os.environ.get("RENDER"))
+
 database_url = os.environ.get("DATABASE_URL", "sqlite:///tutor.db")
 if database_url.startswith("postgres://"):
     database_url = database_url.replace("postgres://", "postgresql://", 1)
 
+secret_key = os.environ.get("SECRET_KEY")
+if not secret_key:
+    if IS_PRODUCTION:
+        # Mieux vaut planter au démarrage que tourner avec une clé connue de tous.
+        raise RuntimeError("SECRET_KEY manquante : définis-la dans les variables d'environnement.")
+    secret_key = "dev-only-change-me"
+
 app.config["SQLALCHEMY_DATABASE_URI"] = database_url
-app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "dev-only-change-me")
+app.config["SECRET_KEY"] = secret_key
+app.config["SESSION_COOKIE_HTTPONLY"] = True
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+app.config["SESSION_COOKIE_SECURE"] = IS_PRODUCTION
+app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024  # 10 Mo max par requête (photos)
+
+TEACHER_PASSWORD = os.environ.get("TEACHER_PASSWORD")
 
 db.init_app(app)
 app.config["UPLOAD_FOLDER"] = os.path.join(app.root_path, "static", "uploads")
@@ -231,7 +250,36 @@ def review_cards():
     intervals = preview_intervals(due_state)
     return render_template("review_card.html", card=due_card, intervals=intervals)
 
+def teacher_required(view):
+    @wraps(view)
+    def wrapped(*args, **kwargs):
+        if not session.get("is_teacher"):
+            return redirect(url_for("teacher_login"))
+        return view(*args, **kwargs)
+    return wrapped
+
+
+@app.route("/teacher/login", methods=["GET", "POST"])
+def teacher_login():
+    error = None
+    if request.method == "POST":
+        submitted = request.form.get("password", "")
+        # compare_digest : comparaison en temps constant, pour ne rien laisser deviner via le temps de réponse
+        if TEACHER_PASSWORD and hmac.compare_digest(submitted.encode(), TEACHER_PASSWORD.encode()):
+            session["is_teacher"] = True
+            return redirect(url_for("teacher_dashboard"))
+        error = "Mot de passe incorrect."
+    return render_template("teacher_login.html", error=error, configured=bool(TEACHER_PASSWORD))
+
+
+@app.route("/teacher/logout")
+def teacher_logout():
+    session.pop("is_teacher", None)
+    return redirect(url_for("home"))
+
+
 @app.route("/teacher")
+@teacher_required
 def teacher_dashboard():
     students = Student.query.all()
     summary, inactive = [], []
@@ -246,6 +294,7 @@ def teacher_dashboard():
 
 
 @app.route("/teacher/student/<int:student_id>")
+@teacher_required
 def teacher_student_detail(student_id):
     student = Student.query.get_or_404(student_id)
     stats = compute_student_stats(student_id)
@@ -258,7 +307,10 @@ def teacher_student_detail(student_id):
             late_cards.append(card)
 
     return render_template("teacher_student_detail.html", student=student, stats=stats, late_cards=late_cards)
+
+
 @app.route("/teacher/student/<int:student_id>/report")
+@teacher_required
 def generate_report(student_id):
     student = Student.query.get_or_404(student_id)
 
@@ -270,11 +322,18 @@ def generate_report(student_id):
         "rapport_final": "",
     }
 
-    result = report_app.invoke(state_ini)
+    try:
+        rapport = report_app.invoke(state_ini)["rapport_final"]
+    except httpx.HTTPStatusError as e:
+        if e.response.status_code != 429:
+            raise
+        rapport = "Le service IA est temporairement saturé (limite de requêtes atteinte). Réessaie dans quelques minutes."
 
-    return render_template("student_report.html", student=student, rapport=result["rapport_final"])
+    return render_template("student_report.html", student=student, rapport=rapport)
+
 
 @app.route("/teacher/submissions")
+@teacher_required
 def teacher_submissions():
     pending = (ExerciseSubmission.query.filter_by(status="pending")
                .order_by(ExerciseSubmission.submitted_at.asc()).all())
@@ -289,6 +348,7 @@ def teacher_submissions():
 
 
 @app.route("/teacher/submissions/<int:submission_id>", methods=["GET", "POST"])
+@teacher_required
 def teacher_submission_detail(submission_id):
     submission = ExerciseSubmission.query.get_or_404(submission_id)
     exercise = Exercise.query.get(submission.exercise_id)
@@ -450,7 +510,10 @@ def submit_exercise(exercise_id):
     if exercise.student_id != session["student_id"]:
         return redirect(url_for("review_exercises"))
 
-    photo = request.files["photo"]
+    photo = request.files.get("photo")
+    if photo is None or not photo.filename or not (photo.mimetype or "").startswith("image/"):
+        abort(400, "Fichier invalide : envoie une image.")
+
     filename = secure_filename(f"{session['student_id']}_{exercise_id}_{int(datetime.utcnow().timestamp())}.jpg")
     save_photo(photo, filename, app.config["UPLOAD_FOLDER"])
 
@@ -461,8 +524,7 @@ def submit_exercise(exercise_id):
     db.session.commit()
     return redirect(url_for("review_exercises"))
 
-    db.session.commit()
-    return redirect(url_for("review_chapter", chapter=chapter))
+
 @app.route("/chapters")
 def chapters_list():
     if "student_id" not in session:

@@ -14,24 +14,6 @@ load_dotenv()
 
 llm = ChatMistralAI(model="mistral-small-latest", api_key=os.getenv("MISTRAL_API_KEY"))
 
-SYSTEM_PROMPT = """Tu es un tuteur de mathématiques. Un élève travaille sur la carte suivante :
-Question : {question}
-Réponse attendue : {answer}
-
-Règles strictes :
-- Ne donne JAMAIS la réponse directement, même si l'élève insiste.
-- Aide-le en posant des questions qui le guident vers la réponse.
-- Si l'élève est complètement bloqué, donne un indice partiel, jamais la solution complète.
-"""
-
-def noeud_tuteur(state: TutorState) -> TutorState:
-    system = SYSTEM_PROMPT.format(question=state["card_question"], answer=state["card_answer"])
-    messages = [SystemMessage(content=system), HumanMessage(content=state["message_eleve"])]
-    reponse = llm.invoke(messages)
-    state["reponse_ia"] = reponse.content
-    return state
-
-
 def compute_cards_stats(student_id):
     now = datetime.utcnow()
     seven_days_ago = now - timedelta(days=7)
