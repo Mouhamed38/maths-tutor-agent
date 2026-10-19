@@ -148,6 +148,17 @@ def format_interval(delta):
     return f"{round(days / 30)} mois"
 
 
+def hard_schedule(interval_days):
+    """Que faire quand l'élève répond 'difficile' ?
+    - carte nouvelle ou en apprentissage (intervalle 0) : on la revoit dans 10 min ;
+    - carte déjà installée : on la fait reculer à ~30 % de son intervalle (10 j -> 3 j), 1 jour minimum.
+    Retourne (nouvel intervalle en jours, délai avant la prochaine révision)."""
+    if interval_days == 0:
+        return 0, timedelta(minutes=10)
+    new_interval = max(1, round(interval_days * 0.3))
+    return new_interval, timedelta(days=new_interval)
+
+
 def preview_intervals(state):
     ease = state.ease_factor if state else 2.5
     interval = state.interval_days if state else 0
@@ -155,9 +166,11 @@ def preview_intervals(state):
     good_interval = 1 if interval == 0 else round(interval * ease)
     easy_interval = 4 if interval == 0 else round(interval * (ease + 0.15) * 1.3)
 
+    _, hard_delay = hard_schedule(interval)
+
     return {
         "again": format_interval(timedelta(minutes=1)),
-        "hard": format_interval(timedelta(minutes=10)),
+        "hard": format_interval(hard_delay),
         "good": format_interval(timedelta(days=good_interval)),
         "easy": format_interval(timedelta(days=easy_interval)),
     }
@@ -173,7 +186,8 @@ def apply_sm2(state, quality):
     elif quality == "hard":
         state.repetitions += 1
         state.ease_factor = max(1.3, state.ease_factor - 0.15)
-        next_review = now + timedelta(minutes=10)
+        state.interval_days, delay = hard_schedule(state.interval_days)
+        next_review = now + delay
 
     elif quality == "good":
         state.repetitions += 1
